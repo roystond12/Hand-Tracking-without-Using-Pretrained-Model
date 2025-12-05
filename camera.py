@@ -1,34 +1,27 @@
 import cv2
-import numpy as np
 import time
-from segment import segmentation
-from collections import deque
+from segment import segment_and_track
 
 def camera():
-    frame = deque(maxlen=30)
-    median = None
     cap = cv2.VideoCapture(0)
-    
+
+    p_time = None
+
     while True:
-        sucess,img = cap.read()
-        if not sucess or img is None:
+        success, frame = cap.read()
+        if not success:
             break
-        
-        frame.append(img)
-        if len(frame) == 30:
-            median = np.median(frame,axis=0).astype(dtype=np.uint8)
-        
-        if median is not None:
-            img = cv2.absdiff(img, median)
-        
-        ctime = time.time()
-        if img is not None:
-            segmentation(img,ctime,ptime=0)
-        
-        key = cv2.waitKey(1)
-        if key == ord('q'):
+
+        frame = cv2.flip(frame, 1)  
+
+        c_time = time.time()
+        p_time = segment_and_track(frame, c_time, p_time)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    
+
     cap.release()
     cv2.destroyAllWindows()
 
+if __name__ == "__main__":
+    camera()
