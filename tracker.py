@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from collections import deque
+from logic import logic
 
 x1, y1, x2, y2 = 200, 100, 440, 380
 
@@ -47,7 +48,7 @@ def tracker(mask, frame, c_time, p_time):
     x, y, bw, bh = cv2.boundingRect(cnt)
     ratio = bh / float(bw)
     if not (0.6 < ratio < 2.5):
-        cv2.putText(frame, "BAD RATIO", (30, 40),
+        cv2.putText(frame, "NO HAND DETECTED", (30, 40),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
         cv2.imshow("Output", frame)
         return c_time
@@ -64,18 +65,12 @@ def tracker(mask, frame, c_time, p_time):
     cy = int(M["m01"] / M["m00"])
     cx, cy = smoother.smooth(cx, cy)
 
-    # Draw centroid
     cv2.circle(frame, (cx, cy), 6, (0, 255, 0), -1)
 
-    # Draw rectangle boundary
     cv2.rectangle(frame, (x1, y1), (x2, y2),
                   (255, 255, 255), 2)
 
     # FPS text
-    if p_time:
-        fps = 1 / (c_time - p_time)
-        cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2)
 
-    cv2.imshow("Output", frame)
+    p_time = logic(frame, cx, cy, (x1, y1, x2, y2), c_time, p_time)
     return c_time
