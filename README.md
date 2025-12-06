@@ -60,7 +60,7 @@ python camera.py
 ## Demo Video
 
 Demo Video (MP4):
-https://github.com/roystond12/Hand-Tracking-without-Using-Pretrained-Model/blob/main/HandTracking_Demo.mp4
+https://github.com/roystond12/Hand-Tracking-without-Using-Pretrained-Model/blob/main/HandTracking_demo.mp4
 
 
 ---
